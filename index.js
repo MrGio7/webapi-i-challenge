@@ -44,11 +44,24 @@ server.post('/api/users', (req, res) => {
     const newUser = req.body;
     db.insert(newUser)
     .then(addUser => {
-        res.status(201).json(newUser)
+        res.status(201).json(addUser)
     })
     .catch(error => {
         sendUserError(400, error, res);
         return;
+    })
+});
+
+server.delete('/api/users/:id', (req, res) => {
+    const {id} = req.params;
+
+    db.remove(id)
+    .then(removeUser => {
+        res.json(removeUser)
+    })
+    .catch(error => {
+        sendUserError(500, 'the user cant be removed', res);
+        return
     })
 })
 
