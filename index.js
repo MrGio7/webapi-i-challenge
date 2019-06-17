@@ -38,6 +38,18 @@ server.get('/api/users/:id', (req, res) => {
     .catch(error => {
         sendUserError(500, 'error looking up user', res);
     })
+});
+
+server.post('/api/users', (req, res) => {
+    const newUser = req.body;
+    db.insert(newUser)
+    .then(addUser => {
+        res.status(201).json(newUser)
+    })
+    .catch(error => {
+        sendUserError(400, error, res);
+        return;
+    })
 })
 
 
