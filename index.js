@@ -63,6 +63,25 @@ server.delete('/api/users/:id', (req, res) => {
         sendUserError(500, 'the user cant be removed', res);
         return
     })
+});
+
+server.put('/api/users/:id', (req, res) => {
+    const {id} = req.params;
+    const changes = req.body;
+
+    db.update(id, changes)
+    .then(updateUser => {
+        if (updateUser) {
+            res.json(updateUser)
+        } else {
+            sendUserError(404, 'incorrect id', res);
+            return;
+        }
+    })
+    .catch(error => {
+        sendUserError(500, 'cant update user', res);
+        return;
+    })
 })
 
 
