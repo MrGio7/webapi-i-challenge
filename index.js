@@ -5,6 +5,11 @@ const server = express();
 
 server.use(express.json());
 
+const sendUserError = (status, message, res) => {
+    res.status(status).json({errorMassage: message});
+    return
+};
+
 server.get('/', (req, res) => {
     res.send('<h2>Server Up</h2>')
 });
@@ -12,12 +17,28 @@ server.get('/', (req, res) => {
 server.get('/api/users', (req, res) => {
     db.find()
     .then(allUsers => {
-        res.send(allUsers)
+        res.json(allUsers)
     })
-    .catch( ({code, message}) => {
-        res.status(code).json({err: message})
+    .catch( error => {
+        sendUserError(500, "data cant be retrieved", res);
+        return;
     })
 });
+
+server.get('/api/users/:id', (req, res) => {
+    const {id} = req.params;
+    db.findById(id)
+    .then(user => {
+        if(user.length === 0) {
+            sendUserError(404, 'user with that id not found', res);
+            return;
+        }
+        res.json(user)
+    })
+    .catch(error => {
+        sendUserError(500, 'error looking up user', res);
+    })
+})
 
 
 
